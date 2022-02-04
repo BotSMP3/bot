@@ -2,7 +2,7 @@ global.DeveloperMode = 'false' //true Or false
 global.linkGC = ['https://chat.whatsapp.com/KihEAYjKr04LI4uUrbiiip']
 global.Owner = {
   // use the phone number with the country code, for example Indonesia '62' America '1' etc
-  '6285846050774': { // put your number here
+  '62821-2413-7452': { // put your number here
     name: 'sergio',
     isDev: true, // if true this number will send if bot have bug and developer mode true
     isReport: true, // if true this number will send if user use command /report or /join
