@@ -1,23 +1,19 @@
-let handler = async (m, { conn, text, usedPrefix, command }) => {
-    let who
-    if (m.isGroup) who = m.mentionedJid[0] ? m.mentionedJid[0] : m.quoted ? m.quoted.sender : false
-    else who = m.chat
-    let user = db.data.users[who]
-    if (!who) return m.reply(`Tag/Mention!\n\nContoh:\n${usedPrefix + command} @0 1\n\nAngka 1 menunjukan total hari`)
-    let txt = text.replace('@' + who.split`@`[0], '').trim()
-    if (!txt) throw `Angkanya mana?\n\nContoh:\n${usedPrefix + command} @0 1`
-    if (isNaN(txt)) return m.reply(`Hanya angka!\n\nContoh:\n${usedPrefix + command} @0 1`)
-    var jumlahHari = 86400000 * txt
-    var now = new Date() * 1
-    if (now < user.premiumTime) user.premiumTime += jumlahHari
-    else user.premiumTime = now + jumlahHari
-    user.premium = true
-    m.reply(`Berhasil menambahkan *${user.name}* sebagai pengguna Premium selama ${txt} hari.\n\nHitung mundur: ${conn.msToDate(user.premiumTime - now)}`)
-}
-handler.help = ['addprem [@user] <angka>']
-handler.tags = ['owner']
-handler.command = /^(add|tambah|\+)p(rem)?$/i
+const { MessageType } = require('@adiwajshing/baileys')
 
+let handler = async(m, { conn, text }) => {
+let who
+  if (m.isGroup) who = m.mentionedJid[0]
+  else who = m.chat
+  if (!who) throw 'Tag salah satu lah,dan masukkan nomor untuk di verivikasi !'
+  // if (participants.map(v=>v.jid).includes(global.conn.user.jid)) {
+    global.db._data.chats[m.chat].premium = true
+  var nomor = m.sender
+    m.reply(`*Done berhasil added User✅*\n\n*Nomor : wa.me/${nomor.split("@s.whatsapp.net")[0]}\n*Expired:* 30Days\n*Thanks For Added Premium !*`)
+  // } else m.reply('Ada nomor host disini...')
+}
+handler.help = ['addprems <nomor>']
+handler.tags = ['owner']
+handler.command = /^addprems$/i
 handler.rowner = true
 
 module.exports = handler
