@@ -1,30 +1,42 @@
-let { MessageType } = require('@adiwajshing/baileys')
-let pajak = 0.02
-let handler = async (m, { conn, text }) => {
-  if (!text) throw 'Masukkan jumlah exp yang akan diberi'
-  let who
-  if (m.isGroup) who = m.mentionedJid[0]
-  else who = m.chat
-  if (!who) throw 'Tag salah satu lah'
-  let txt = text.replace('@' + who.split`@`[0], '').trim()
-  if (isNaN(txt)) throw 'Hanya angka'
-  let xp = parseInt(txt)
-  let exp = xp
-  let pjk = Math.ceil(xp * pajak)
-  exp += pjk
-  if (exp < 1) throw 'Minimal 1'
-  let users = global.db.data.users
-  if (exp > users[m.sender].exp) throw 'Exp tidak mencukupi untuk mentransfer'
-  users[m.sender].exp -= exp
-  users[who].exp += xp
-
-  m.reply(`(${-xp} XP) + (${-pjk} XP (Pajak 2%)) = ( ${-exp} XP)`)
-  conn.fakeReply(m.chat, `+${xp} XP`, who, m.text)
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+const { servers, yta, ytv } = require('../lib/y2mate')
+let yts = require('yt-search')
+let fetch = require('node-fetch')
+let handler = async (m, { conn, command, text, usedPrefix }) => {
+  if (!text) throw `uhm.. cari apa?\n\ncontoh:\n${usedPrefix + command} DJ tutu`
+  let chat = global.db.data.chats[m.chat]
+  let results = await yts(text)
+  let vid = results.all.find(video => video.seconds < 3600)
+  if (!vid) throw 'Konten Tidak ditemukan'
+  let isVideo = /2$/.test(command)
+  let yt = false
+  let yt2 = false
+  let usedServer = servers[0]
+  for (let i in servers) {
+    let server = servers[i]
+    try {
+      yt = await yta(vid.url, server)
+      yt2 = await ytv(vid.url, server)
+      usedServer = server
+      break
+    } catch (e) {
+      m.reply(`Server ${server} error!${servers.length >= i + 1 ? '' : '\nmencoba server lain...'}`)
+    }
+  }
+  if (yt === false) throw 'semua server gagal'
+  if (yt2 === false) throw 'semua server gagal'
+  let { dl_link, thumb, title, filesize, filesizeF } = yt
+  await conn.send2ButtonLoc(m.chat, await (await fetch(thumb)).buffer(), `
+*Judul:* ${title}
+*Ukuran File Audio:* ${filesizeF}
+*Ukuran File Video:* ${yt2.filesizeF}
+*Server y2mate:* ${usedServer}
+`.trim(), 'BOTSTYLE', 'Audio', `.yta ${vid.url}`, 'Video', `.yt ${vid.url}`)
 }
-handler.help = ['pay @user <amount>']
-handler.tags = ['xp']
-handler.command = /^pay$/
-handler.rowner = true
+handler.help = ['play'].map(v => v + ' <pencarian>')
+handler.tags = ['downloader']
+handler.command = /^(p|play)$/i
+
+handler.exp = 0
 
 module.exports = handler
-
