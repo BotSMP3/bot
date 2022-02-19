@@ -1,30 +1,24 @@
-let { MessageType } = require('@adiwajshing/baileys')
-let pajak = 0.02
-let handler = async (m, { conn, text }) => {
-  if (!text) throw 'Masukkan jumlah exp yang akan diberi'
-  let who
-  if (m.isGroup) who = m.mentionedJid[0]
-  else who = m.chat
-  if (!who) throw 'Tag salah satu lah'
-  let txt = text.replace('@' + who.split`@`[0], '').trim()
-  if (isNaN(txt)) throw 'Hanya angka'
-  let xp = parseInt(txt)
-  let exp = xp
-  let pjk = Math.ceil(xp * pajak)
-  exp += pjk
-  if (exp < 1) throw 'Minimal 1'
-  let users = global.db.data.users
-  if (exp > users[m.sender].exp) throw 'Exp tidak mencukupi untuk mentransfer'
-  users[m.sender].exp -= exp
-  users[who].exp += xp
+let  limit  =  30
+const { servers, yta } = require('../lib/y2mate')
 
-  m.reply(`(${-xp} XP) + (${-pjk} XP (Pajak 2%)) = ( ${-exp} XP)`)
-  conn.fakeReply(m.chat, `+${xp} XP`, who, m.text)
+let handler = async (m, { conn, args, isPrems, isOwner, usedPrefix, command }) => {
+  if (!args || !args[0]) throw `Pengunaan:\n${usedPrefix + command} <url>\n\nContoh:\n${usedPrefix + command} https://www.youtube.com/watch?v=yxDdj_G9uRY`
+  let chat = db.data.chats[m.chat]
+  let server = (args[1] || servers[0]).toLowerCase()
+  let { dl_link, thumb, title, filesize, filesizeF } = await yta(args[0], servers.includes(server) ? server : servers[0])
+  let  isLimit  =  ( isPrems  ||  isOwner ? 99 : limit )  *  1024  <  filesize
+  m . reply ( isLimit ? `File Size: ${ filesizeF } \nFile size above ${ limit } MB, download itself: ${ dl_link } ` : wait )
+  if (!isLimit) conn.sendFile(m.chat, dl_link, title + '.mp3', `
+*Title:* ${ title }
+*File Size:* ${ filesizeF }
+`.trim(), m, null, {
+    asDocument: chat.useDocument, mimetype: 'audio/mp4'
+  } )
 }
-handler.help = ['pay @user <amount>']
-handler.tags = ['xp']
-handler.command = /^pay$/
-handler.rowner = true
+handler.help = ['mp3', 'a'].map(v => 'yt' + v + ` <url> [server: ${servers.join(', ')}]`)
+handler.tags = ['downloader']
+handler.command = /^yt(a|mp3)$/i
+
+handler . limit  =  1
 
 module.exports = handler
-
