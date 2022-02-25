@@ -1,7 +1,7 @@
 let handler = async m => m.reply(`
 ╭─「 Donasi 」
-│ • Indosat [082124137452]
-│ • Gopay [082124137452]
+│ • Indosat [6282171240131]
+│ • Gopay [6282171240131]
 │ • Saweria [https://saweria.co/botstyle]
 ╰────
 ╭─「 Hubungi 」
