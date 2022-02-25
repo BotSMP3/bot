@@ -5,7 +5,7 @@ let handler = async m => m.reply(`
 │ • Saweria [https://saweria.co/botstyle]
 ╰────
 ╭─「 Hubungi 」
-│ > Ingin donasi? Wa.me/6282124137452
+│ > Ingin donasi? Wa.me/6282171240131
 ╰────
 `.trim()) // Tambah sendiri kalo mau
 handler.help = ['donasi']
