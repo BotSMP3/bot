@@ -172,6 +172,8 @@ module.exports = {
 						if (!user.role) user.role = 'Beginner'
 					}
 					if (!('autolevelup' in user)) user.autolevelup = true
+                                        if (!('premium' in user)) user.premium = false
+                                        if (!isNumber(user.premiumTime)) user.premiumTime = 0
 				} else global.db.data.users[m.sender] = {
 					healt: 100,
 					stamina: 100,
@@ -297,6 +299,8 @@ module.exports = {
 					regTime: -1,
 					role: 'Beginner',
 					autolevelup: true,
+                                        premium: false,
+                                        premiumTime: 0,
 				}
 
 				let chat = global.db.data.chats[m.chat]
@@ -641,7 +645,7 @@ module.exports = {
 		if (m.key.fromMe) return
 		let chat = global.db.data.chats[m.key.remoteJid]
 		if (chat.delete) return
-		/*await this.reply(m.key.remoteJid, `
+		await this.reply(m.key.remoteJid, `
 Terdeteksi @${m.participant.split`@`[0]} telah menghapus pesan
 
 Untuk mematikan fitur ini, ketik
@@ -651,7 +655,7 @@ Untuk mematikan fitur ini, ketik
 				mentionedJid: [m.participant]
 			}
 		})
-		this.copyNForward(m.key.remoteJid, m.message).catch(e => console.log(e, m))*/
+		this.copyNForward(m.key.remoteJid, m.message).catch(e => console.log(e, m))
 	},
 	async onCall(json) {
 		let {
