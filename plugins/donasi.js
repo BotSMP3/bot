@@ -1,6 +1,6 @@
 let handler = async m => m.reply(`
 ╭─「 Donasi 」
-│ • Indosat [082171240131]
+│ • Telkomsel [082171240131]
 │ • Gopay [082171240131]
 │ • Saweria [https://saweria.co/botstyle]
 ╰────
